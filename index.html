@@ -1,229 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Arabic Alphabet Matching Game - Full</title>
-  <style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Arabic Alphabet - Match the Animal</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #fefefe;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  h1 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #3a0ca3;
+  }
+  .game-container {
+    display: flex;
+    gap: 40px;
+    max-width: 1000px;
+    width: 100%;
+  }
+  .letters-container, .images-container {
+    background: #f7f7f7;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .letters-container {
+    max-width: 250px;
+  }
+  .letters-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .letter {
+    user-select: none;
+    cursor: grab;
+    font-size: 32px;
+    background: #8e7cc3;
+    color: white;
+    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 0.2);
+    transition: background-color 0.3s;
+  }
+  .letter:active {
+    cursor: grabbing;
+    background-color: #6b57a1;
+  }
+  .images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
+    gap: 20px;
+  }
+  .card {
+    perspective: 900px;
+  }
+  .card-inner {
+    position: relative;
+    width: 140px;
+    height: 180px;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+  }
+  .card.flipped .card-inner {
+    transform: rotateY(180deg);
+    cursor: default;
+  }
+  .card-front, .card-back {
+    position: absolute;
+    width: 140px;
+    height: 180px;
+    border-radius: 12px;
+    backface-visibility: hidden;
+  }
+  .card-front {
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 2px solid #ddd;
+  }
+  .card-front img {
+    max-width: 100px;
+    max-height: 100px;
+    margin: 0 auto 10px;
+    border-radius: 8px;
+  }
+  .drop-zone {
+    border: 2px dashed #8e7cc3;
+    border-radius: 8px;
+    margin: 0 15px;
+    padding: 15px 0;
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #aaa;
+    font-weight: bold;
+  }
+  .card-back {
+    background: #8e7cc3;
+    color: white;
+    transform: rotateY(180deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    font-weight: 700;
+    padding: 10px;
+  }
+  #message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #3a0ca3;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 18px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #message.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  @media(max-width: 720px) {
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      color: #333;
+      flex-direction: column;
+      height: auto;
     }
     .game-container {
-      display: flex;
-      justify-content: center;
-      gap: 50px;
-      margin-top: 30px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      max-width: 400px;
+      margin: 0 auto;
     }
-    .column {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px #ccc;
-      width: 220px;
-      max-height: 600px;
-      overflow-y: auto;
+    .letters-container {
+      max-width: 100%;
+      margin-bottom: 20px;
     }
-    .item {
-      cursor: pointer;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-      font-size: 24px;
-      user-select: none;
-      transition: background-color 0.3s;
+    .images-grid {
+      grid-template-columns: repeat(auto-fill,minmax(120px,1fr));
     }
-    .item:last-child {
-      border-bottom: none;
-    }
-    .item:hover {
-      background-color: #e0d7ff;
-    }
-    .selected {
-      background-color: #a8d5ff;
-    }
-    .matched {
-      background-color: #a8f0a5;
-      cursor: default;
-    }
-    #message {
-      margin-top: 20px;
-      font-size: 18px;
-      height: 24px;
-      color: #444;
-    }
-    @media (max-width: 600px) {
-      .game-container {
-        flex-direction: column;
-        align-items: center;
-      }
-      .column {
-        width: 80%;
-        max-height: none;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 
-  <h1>Arabic Alphabet Matching Game - Full Alphabet</h1>
-  <p>Click a letter on the left, then click the matching English name on the right.</p>
-
+  <h1>Match the Arabic Alphabet to the Image</h1>
   <div class="game-container">
-    <div class="column" id="letters-column">
-      <h3>Arabic Letters</h3>
+    <div class="letters-container">
+      <h3>Arabic Letters (Drag me)</h3>
+      <div class="letters-list" id="letters-list"></div>
     </div>
-    <div class="column" id="names-column">
-      <h3>English Names</h3>
+    <div class="images-container">
+      <h3>Animals & Words (Drop here)</h3>
+      <div class="images-grid" id="images-grid"></div>
     </div>
   </div>
 
   <div id="message"></div>
 
-  <script>
-    const pairs = [
-      { letter: "أ", name: "Alif" },
-      { letter: "ب", name: "Bāʼ" },
-      { letter: "ت", name: "Tāʼ" },
-      { letter: "ث", name: "Thāʼ" },
-      { letter: "ج", name: "Jīm" },
-      { letter: "ح", name: "Ḥāʼ" },
-      { letter: "خ", name: "Khāʼ" },
-      { letter: "د", name: "Dāl" },
-      { letter: "ذ", name: "Dhāl" },
-      { letter: "ر", name: "Rāʼ" },
-      { letter: "ز", name: "Zāy" },
-      { letter: "س", name: "Sīn" },
-      { letter: "ش", name: "Shīn" },
-      { letter: "ص", name: "Ṣād" },
-      { letter: "ض", name: "Ḍād" },
-      { letter: "ط", name: "Ṭāʼ" },
-      { letter: "ظ", name: "Ẓāʼ" },
-      { letter: "ع", name: "ʿAyn" },
-      { letter: "غ", name: "Ghayn" },
-      { letter: "ف", name: "Fāʼ" },
-      { letter: "ق", name: "Qāf" },
-      { letter: "ك", name: "Kāf" },
-      { letter: "ل", name: "Lām" },
-      { letter: "م", name: "Mīm" },
-      { letter: "ن", name: "Nūn" },
-      { letter: "ه", name: "Hāʼ" },
-      { letter: "و", name: "Wāw" },
-      { letter: "ي", name: "Yāʼ" }
-    ];
+<script>
+  // Data: letter, word, image
+  const data = [
+    { letter: "أ", word: "أسد", image: "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg" },       // Lion
+    { letter: "ب", word: "بطة", image: "https://upload.wikimedia.org/wikipedia/commons/8/89/Male_Mallard_Duck_in_Flight_-_side_view.jpg" }, // Duck
+    { letter: "ت", word: "تفاحة", image: "https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg" },                         // Apple
+    { letter: "ث", word: "ثعلب", image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Red_Fox_in_Tasmania.jpg" },                  // Fox
+    { letter: "ج", word: "جمل", image: "https://upload.wikimedia.org/wikipedia/commons/3/37/Dromedary_Camel_1.jpg" },                     // Camel
+    { letter: "ح", word: "حصان", image: "https://upload.wikimedia.org/wikipedia/commons/7/74/Arabian_Horse_Jarq.jpg" },                   // Horse
+    { letter: "خ", word: "خروف", image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Sheep_in_El_Chalten%2C_Argentina.jpg" },    // Sheep
+    { letter: "د", word: "دجاجة", image: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Hen_chicken_in_a_farm.jpg" },                // Chicken
+    { letter: "ذ", word: "ذئب", image: "https://upload.wikimedia.org/wikipedia/commons/1/12/Canis_lupus_laying_in_snow.jpg" },              // Wolf
+    { letter: "ر", word: "رمان", image: "https://upload.wikimedia.org/wikipedia/commons/9/90/Pomegranate_DUS_2006.jpg" },                   // Pomegranate
+    { letter: "ز", word: "زهرة", image: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Rose_flower_in_nature_%2823%29.jpg" },        // Flower
+    { letter: "س", word: "سمك", image: "https://upload.wikimedia.org/wikipedia/commons/8/82/Clown_fish_in_anemone.jpg" },                   // Fish
+    { letter: "ش", word: "شجرة", image: "https://upload.wikimedia.org/wikipedia/commons/e/e9/Oak_tree_pano_winter.jpg" },                   // Tree
+    { letter: "ص", word: "صقر", image: "https://upload.wikimedia.org/wikipedia/commons/0/05/Falcon_in_flight_-_Qatar_2011.JPG" },           // Falcon
+    { letter: "ض", word: "ضفدع", image: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Green_frog_Pelophylax_clamens.jpg" },          // Frog
+    { letter: "ط", word: "طائرة", image: "https://upload.wikimedia.org/wikipedia/commons/3/31/Boeing_747-400_Japan_Airlines_JA8945_%2810146356794%29.jpg" }, // Plane
+    { letter: "ظ", word: "ظل", image: "https://upload.wikimedia.org/wikipedia/commons/2/23/Shadow_on_road_-_geograph.org.uk_-_1161609.jpg" }, // Shadow
+    { letter: "ع", word: "عين", image: "https://upload.wikimedia.org/wikipedia/commons/4/46/Human_eye_closeup_2.jpg" },                      // Eye
+    { letter: "غ", word: "غزال", image: "https://upload.wikimedia.org/wikipedia/commons/7/79/Gazella_gazella_-Israel-8a.jpg" },             // Gazelle
+    { letter: "ف", word: "فيل", image: "https://upload.wikimedia.org/wikipedia/commons/6/63/African_elephant_warning_raised_trunk.jpg" },    // Elephant
+    { letter: "ق", word: "قرد", image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Banana_lover.JPG" },                             // Monkey
+    { letter: "ك", word: "كتاب", image: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Book_icon.svg" },                              // Book
+    { letter: "ل", word: "لبن", image: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Glass_of_milk_on_tablecloth.jpg" },             // Milk
+    { letter: "م", word: "ماء", image: "https://upload.wikimedia.org/wikipedia/commons/3/37/Water_drop_001.jpg" },                           // Water
+    { letter: "ن", word: "نار", image: "https://upload.wikimedia.org/wikipedia/commons/1/15/Fire_icon.svg" },                                // Fire
+    { letter: "ه", word: "هاتف", image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Smartphone_icon.svg" },                         // Phone
+    { letter: "و", word: "وردة", image: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Rose_flower_in_nature_%282%29.jpg" },           // Rose
+    { letter: "ي", word: "يد", image: "https://upload.wikimedia.org/wikipedia/commons/2/28/Hand_icon.svg" },                                 // Hand
+  ];
 
-    // Shuffle function
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
+  const lettersListEl = document.getElementById('letters-list');
+  const imagesGridEl = document.getElementById('images-grid');
+  const messageEl = document.getElementById('message');
+
+  // Shuffle letters for drag list so it's not always in same order
+  function shuffle(array) {
+    for(let i=array.length-1; i>0; i--){
+      const j = Math.floor(Math.random() * (i+1));
+      [array[i], array[j]] = [array[j], array[i]];
     }
+    return array;
+  }
 
-    const lettersColumn = document.getElementById('letters-column');
-    const namesColumn = document.getElementById('names-column');
-    const messageEl = document.getElementById('message');
+  const shuffledLetters = shuffle([...data]);
 
-    let selectedLetter = null;
-    let selectedName = null;
-    let matches = 0;
+  // Create draggable letters
+  shuffledLetters.forEach(({letter}, i) => {
+    const letterDiv = document.createElement('div');
+    letterDiv.textContent = letter;
+    letterDiv.classList.add('letter');
+    letterDiv.draggable = true;
+    letterDiv.id = `letter-${i}`;
+    letterDiv.dataset.letter = letter;
 
-    const letters = shuffle(pairs.map(p => ({ ...p })));
-    const names = shuffle(pairs.map(p => ({ ...p })));
+    letterDiv.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', letterDiv.dataset.letter);
+      setTimeout(() => {
+        letterDiv.style.visibility = 'hidden';
+      }, 0);
+    });
 
-    function clearSelections() {
-      selectedLetter = null;
-      selectedName = null;
-      document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
-    }
+    letterDiv.addEventListener('dragend', e => {
+      letterDiv.style.visibility = 'visible';
+    });
 
-    function renderItems() {
-      lettersColumn.innerHTML = '<h3>Arabic Letters</h3>';
-      namesColumn.innerHTML = '<h3>English Names</h3>';
+    lettersListEl.appendChild(letterDiv);
+  });
 
-      letters.forEach((item, idx) => {
-        const div = document.createElement('div');
-        div.textContent = item.letter;
-        div.classList.add('item');
-        div.dataset.index = idx;
-        div.dataset.type = 'letter';
-        div.addEventListener('click', onItemClick);
-        lettersColumn.appendChild(div);
-      });
+  // Create image cards with drop zones
+  data.forEach(({image, word, letter}, i) => {
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.id = `card-${i}`;
 
-      names.forEach((item, idx) => {
-        const div = document.createElement('div');
-        div.textContent = item.name;
-        div.classList.add('item');
-        div.dataset.index = idx;
-        div.dataset.type = 'name';
-        div.addEventListener('click', onItemClick);
-        namesColumn.appendChild(div);
-      });
-    }
+    const cardInner = document.createElement('div');
+    cardInner.classList.add('card-inner');
 
-    function onItemClick(e) {
-      const el = e.target;
-      if (el.classList.contains('matched')) return;
+    // Front side with image and drop zone
+    const cardFront = document.createElement('div');
+    cardFront.classList.add('card-front');
+    cardFront.innerHTML = `
+      <img src="${image}" alt="${word}" loading="lazy" />
+      <div class="drop-zone" data-letter="${letter}">Drop letter here</div>
+    `;
 
-      const type = el.dataset.type;
-      const idx = parseInt(el.dataset.index);
+    // Back side with Arabic word
+    const cardBack = document.createElement('div');
+    cardBack.classList.add('card-back');
+    cardBack.textContent = word;
 
-      if (type === 'letter') {
-        if (selectedLetter === el) {
-          el.classList.remove('selected');
-          selectedLetter = null;
-        } else {
-          clearSelections();
-          selectedLetter = el;
-          el.classList.add('selected');
+    cardInner.appendChild(cardFront);
+    cardInner.appendChild(cardBack);
+    card.appendChild(cardInner);
+    imagesGridEl.appendChild(card);
+  });
+
+  // Drag & drop events on drop zones
+  imagesGridEl.querySelectorAll('.drop-zone').forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      zone.style.borderColor = '#3a0ca3';
+      zone.style.color = '#3a0ca3';
+    });
+    zone.addEventListener('dragleave', e => {
+      zone.style.borderColor = '#8e7cc3';
+      zone.style.color = '#aaa';
+    });
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.style.borderColor = '#8e7cc3';
+      zone.style.color = '#aaa';
+
+      const draggedLetter = e.dataTransfer.getData('text/plain');
+      const expectedLetter = zone.dataset.letter;
+
+      if (draggedLetter === expectedLetter) {
+        // Correct match!
+        const card = zone.closest('.card');
+        card.classList.add('flipped');
+
+        // Remove dragged letter from letters list
+        const draggedEl = document.querySelector(`.letter[data-letter='${draggedLetter}']`);
+        if (draggedEl) {
+          draggedEl.remove();
         }
-      } else if (type === 'name') {
-        if (selectedName === el) {
-          el.classList.remove('selected');
-          selectedName = null;
-        } else {
-          if (selectedLetter == null) {
-            messageEl.textContent = "Please select a letter first!";
-            return;
-          }
-          selectedName = el;
-          el.classList.add('selected');
 
-          const letterIdx = selectedLetter.dataset.index;
-          const nameIdx = selectedName.dataset.index;
-
-          if (letters[letterIdx].name === names[nameIdx].name) {
-            selectedLetter.classList.add('matched');
-            selectedName.classList.add('matched');
-            messageEl.textContent = "✅ Correct!";
-            matches++;
-            if (matches === pairs.length) {
-              messageEl.textContent = "🎉 You matched all pairs! Well done!";
-            }
-          } else {
-            messageEl.textContent = "❌ Try again.";
-            setTimeout(() => {
-              selectedLetter.classList.remove('selected');
-              selectedName.classList.remove('selected');
-              messageEl.textContent = "";
-            }, 1000);
-          }
-
-          selectedLetter = null;
-          selectedName = null;
-        }
+        showMessage('Correct! 🎉', true);
+      } else {
+        // Incorrect
+        showMessage('Try again! ❌', false);
       }
-    }
+    });
+  });
 
-    renderItems();
-  </script>
+  function showMessage(text, success) {
+    messageEl.textContent = text;
+    messageEl.style.backgroundColor = success ? '#3a0ca3' : '#a32a2a';
+    messageEl.classList.add('show');
+    setTimeout(() => {
+      messageEl.classList.remove('show');
+      messageEl.textContent = '';
+    }, 1500);
+  }
+</script>
 
 </body>
 </html>

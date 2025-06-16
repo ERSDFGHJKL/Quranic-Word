@@ -1,25 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Arabic Alphabet - Match the Animal</title>
+<title>Arabic Alphabet Fun Match</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+
   body {
-    font-family: Arial, sans-serif;
-    background: #fefefe;
+    font-family: 'Comic Neue', cursive, Arial, sans-serif;
+    background: linear-gradient(135deg, #ffd6e8, #fef6e4);
     margin: 0;
     padding: 20px;
     display: flex;
     justify-content: center;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    user-select: none;
   }
   h1 {
     width: 100%;
     text-align: center;
-    margin-bottom: 10px;
-    color: #3a0ca3;
+    margin-bottom: 15px;
+    font-size: 2.5rem;
+    color: #ff4da6;
+    text-shadow: 2px 2px 5px #ffa3c9;
   }
   .game-container {
     display: flex;
@@ -28,59 +27,67 @@
     width: 100%;
   }
   .letters-container, .images-container {
-    background: #f7f7f7;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
-    padding: 20px;
+    background: #fff3f7;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgb(255 77 166 / 0.3);
+    padding: 25px;
     flex: 1;
     overflow-y: auto;
   }
   .letters-container {
-    max-width: 250px;
+    max-width: 280px;
   }
   .letters-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 15px;
     justify-content: center;
   }
   .letter {
-    user-select: none;
     cursor: grab;
-    font-size: 32px;
-    background: #8e7cc3;
+    font-size: 48px;
+    font-weight: 900;
+    background: linear-gradient(145deg, #ff85b3, #ff4da6);
     color: white;
-    border-radius: 8px;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 6px rgb(0 0 0 / 0.2);
-    transition: background-color 0.3s;
+    border-radius: 50%;
+    width: 68px;
+    height: 68px;
+    line-height: 68px;
+    text-align: center;
+    box-shadow:
+      0 6px 8px rgba(255, 77, 166, 0.5),
+      inset 0 -3px 5px rgba(255, 255, 255, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
   }
   .letter:active {
     cursor: grabbing;
-    background-color: #6b57a1;
+    transform: scale(1.1);
+    box-shadow:
+      0 12px 14px rgba(255, 77, 166, 0.7),
+      inset 0 -3px 5px rgba(255, 255, 255, 0.5);
+  }
+  .letter:focus-visible {
+    outline: 3px solid #ffb3d1;
   }
   .images-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill,minmax(160px,1fr));
+    gap: 25px;
   }
   .card {
-    perspective: 900px;
+    perspective: 1000px;
   }
   .card-inner {
     position: relative;
-    width: 140px;
-    height: 180px;
+    width: 160px;
+    height: 200px;
     text-align: center;
-    transition: transform 0.6s;
+    transition: transform 0.7s;
     transform-style: preserve-3d;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    border-radius: 12px;
+    border-radius: 25px;
     background: white;
+    box-shadow: 0 8px 15px rgba(255, 77, 166, 0.3);
     cursor: pointer;
   }
   .card.flipped .card-inner {
@@ -89,60 +96,83 @@
   }
   .card-front, .card-back {
     position: absolute;
-    width: 140px;
-    height: 180px;
-    border-radius: 12px;
+    width: 160px;
+    height: 200px;
+    border-radius: 25px;
     backface-visibility: hidden;
+    user-select: none;
   }
   .card-front {
-    background: #fff;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border: 2px solid #ddd;
+    border: 3px solid #ff4da6;
+    padding: 10px;
   }
   .card-front img {
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 120px;
+    max-height: 120px;
     margin: 0 auto 10px;
-    border-radius: 8px;
+    border-radius: 15px;
+    object-fit: contain;
+    box-shadow: 0 5px 12px rgba(255, 77, 166, 0.3);
+    transition: transform 0.3s ease;
+  }
+  .card-front img:hover {
+    transform: scale(1.05) rotate(3deg);
   }
   .drop-zone {
-    border: 2px dashed #8e7cc3;
-    border-radius: 8px;
-    margin: 0 15px;
+    border: 3px dashed #ff4da6;
+    border-radius: 20px;
+    margin: 5px 25px;
     padding: 15px 0;
-    min-height: 50px;
+    min-height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #aaa;
-    font-weight: bold;
+    color: #ff7fcf;
+    font-weight: 700;
+    font-size: 1.2rem;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .drop-zone.correct {
+    border-color: #6adc98;
+    color: #30c368;
+    font-weight: 900;
   }
   .card-back {
-    background: #8e7cc3;
+    background: #ff4da6;
     color: white;
     transform: rotateY(180deg);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 32px;
-    font-weight: 700;
+    font-size: 2.8rem;
+    font-weight: 900;
     padding: 10px;
+    text-shadow: 2px 2px 5px #c01e7e;
   }
   #message {
     position: fixed;
-    bottom: 20px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    background: #3a0ca3;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-size: 18px;
+    background: #6adc98;
+    color: #00531b;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     opacity: 0;
     pointer-events: none;
+    user-select: none;
     transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+  #message.error {
+    background: #ff5f5f;
+    color: #7b0000;
   }
   #message.show {
     opacity: 1;
@@ -152,87 +182,88 @@
     body {
       flex-direction: column;
       height: auto;
+      padding: 10px;
     }
     .game-container {
       flex-direction: column;
-      max-width: 400px;
+      max-width: 420px;
       margin: 0 auto;
+      gap: 30px;
     }
     .letters-container {
       max-width: 100%;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     .images-grid {
-      grid-template-columns: repeat(auto-fill,minmax(120px,1fr));
+      grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
+      gap: 20px;
     }
   }
 </style>
 </head>
 <body>
 
-  <h1>Match the Arabic Alphabet to the Image</h1>
+  <h1>تعلم الحروف العربية بطريقة ممتعة!</h1>
   <div class="game-container">
-    <div class="letters-container">
-      <h3>Arabic Letters (Drag me)</h3>
-      <div class="letters-list" id="letters-list"></div>
+    <div class="letters-container" aria-label="Arabic letters to drag">
+      <h3>اسحب الحرف</h3>
+      <div class="letters-list" id="letters-list" role="list"></div>
     </div>
-    <div class="images-container">
-      <h3>Animals & Words (Drop here)</h3>
-      <div class="images-grid" id="images-grid"></div>
+    <div class="images-container" aria-label="Animal pictures with drop zones">
+      <h3>وأفلت الحرف على الصورة الصحيحة</h3>
+      <div class="images-grid" id="images-grid" role="list"></div>
     </div>
   </div>
 
-  <div id="message"></div>
+  <div id="message" role="alert" aria-live="assertive"></div>
 
 <script>
-  // Data: letter, word, image
   const data = [
-    { letter: "أ", word: "أسد", image: "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg" },       // Lion
-    { letter: "ب", word: "بطة", image: "https://upload.wikimedia.org/wikipedia/commons/8/89/Male_Mallard_Duck_in_Flight_-_side_view.jpg" }, // Duck
-    { letter: "ت", word: "تفاحة", image: "https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg" },                         // Apple
-    { letter: "ث", word: "ثعلب", image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Red_Fox_in_Tasmania.jpg" },                  // Fox
-    { letter: "ج", word: "جمل", image: "https://upload.wikimedia.org/wikipedia/commons/3/37/Dromedary_Camel_1.jpg" },                     // Camel
-    { letter: "ح", word: "حصان", image: "https://upload.wikimedia.org/wikipedia/commons/7/74/Arabian_Horse_Jarq.jpg" },                   // Horse
-    { letter: "خ", word: "خروف", image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Sheep_in_El_Chalten%2C_Argentina.jpg" },    // Sheep
-    { letter: "د", word: "دجاجة", image: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Hen_chicken_in_a_farm.jpg" },                // Chicken
-    { letter: "ذ", word: "ذئب", image: "https://upload.wikimedia.org/wikipedia/commons/1/12/Canis_lupus_laying_in_snow.jpg" },              // Wolf
-    { letter: "ر", word: "رمان", image: "https://upload.wikimedia.org/wikipedia/commons/9/90/Pomegranate_DUS_2006.jpg" },                   // Pomegranate
-    { letter: "ز", word: "زهرة", image: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Rose_flower_in_nature_%2823%29.jpg" },        // Flower
-    { letter: "س", word: "سمك", image: "https://upload.wikimedia.org/wikipedia/commons/8/82/Clown_fish_in_anemone.jpg" },                   // Fish
-    { letter: "ش", word: "شجرة", image: "https://upload.wikimedia.org/wikipedia/commons/e/e9/Oak_tree_pano_winter.jpg" },                   // Tree
-    { letter: "ص", word: "صقر", image: "https://upload.wikimedia.org/wikipedia/commons/0/05/Falcon_in_flight_-_Qatar_2011.JPG" },           // Falcon
-    { letter: "ض", word: "ضفدع", image: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Green_frog_Pelophylax_clamens.jpg" },          // Frog
-    { letter: "ط", word: "طائرة", image: "https://upload.wikimedia.org/wikipedia/commons/3/31/Boeing_747-400_Japan_Airlines_JA8945_%2810146356794%29.jpg" }, // Plane
-    { letter: "ظ", word: "ظل", image: "https://upload.wikimedia.org/wikipedia/commons/2/23/Shadow_on_road_-_geograph.org.uk_-_1161609.jpg" }, // Shadow
-    { letter: "ع", word: "عين", image: "https://upload.wikimedia.org/wikipedia/commons/4/46/Human_eye_closeup_2.jpg" },                      // Eye
-    { letter: "غ", word: "غزال", image: "https://upload.wikimedia.org/wikipedia/commons/7/79/Gazella_gazella_-Israel-8a.jpg" },             // Gazelle
-    { letter: "ف", word: "فيل", image: "https://upload.wikimedia.org/wikipedia/commons/6/63/African_elephant_warning_raised_trunk.jpg" },    // Elephant
-    { letter: "ق", word: "قرد", image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Banana_lover.JPG" },                             // Monkey
-    { letter: "ك", word: "كتاب", image: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Book_icon.svg" },                              // Book
-    { letter: "ل", word: "لبن", image: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Glass_of_milk_on_tablecloth.jpg" },             // Milk
-    { letter: "م", word: "ماء", image: "https://upload.wikimedia.org/wikipedia/commons/3/37/Water_drop_001.jpg" },                           // Water
-    { letter: "ن", word: "نار", image: "https://upload.wikimedia.org/wikipedia/commons/1/15/Fire_icon.svg" },                                // Fire
-    { letter: "ه", word: "هاتف", image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Smartphone_icon.svg" },                         // Phone
-    { letter: "و", word: "وردة", image: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Rose_flower_in_nature_%282%29.jpg" },           // Rose
-    { letter: "ي", word: "يد", image: "https://upload.wikimedia.org/wikipedia/commons/2/28/Hand_icon.svg" },                                 // Hand
+    { letter: "أ", word: "أسد", image: "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg" },
+    { letter: "ب", word: "بطة", image: "https://upload.wikimedia.org/wikipedia/commons/8/89/Male_Mallard_Duck_in_Flight_-_side_view.jpg" },
+    { letter: "ت", word: "تفاحة", image: "https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg" },
+    { letter: "ث", word: "ثعلب", image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Red_Fox_in_Tasmania.jpg" },
+    { letter: "ج", word: "جمل", image: "https://upload.wikimedia.org/wikipedia/commons/3/37/Dromedary_Camel_1.jpg" },
+    { letter: "ح", word: "حصان", image: "https://upload.wikimedia.org/wikipedia/commons/7/74/Arabian_Horse_Jarq.jpg" },
+    { letter: "خ", word: "خروف", image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Sheep_in_El_Chalten%2C_Argentina.jpg" },
+    { letter: "د", word: "دجاجة", image: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Hen_chicken_in_a_farm.jpg" },
+    { letter: "ذ", word: "ذئب", image: "https://upload.wikimedia.org/wikipedia/commons/1/12/Canis_lupus_laying_in_snow.jpg" },
+    { letter: "ر", word: "رمان", image: "https://upload.wikimedia.org/wikipedia/commons/9/90/Pomegranate_DUS_2006.jpg" },
+    { letter: "ز", word: "زهرة", image: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Rose_flower_in_nature_%2823%29.jpg" },
+    { letter: "س", word: "سمك", image: "https://upload.wikimedia.org/wikipedia/commons/8/82/Clown_fish_in_anemone.jpg" },
+    { letter: "ش", word: "شجرة", image: "https://upload.wikimedia.org/wikipedia/commons/e/e9/Oak_tree_pano_winter.jpg" },
+    { letter: "ص", word: "صقر", image: "https://upload.wikimedia.org/wikipedia/commons/0/05/Falcon_in_flight_-_Qatar_2011.JPG" },
+    { letter: "ض", word: "ضفدع", image: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Green_frog_Pelophylax_clamens.jpg" },
+    { letter: "ط", word: "طائرة", image: "https://upload.wikimedia.org/wikipedia/commons/3/31/Boeing_747-400_Japan_Airlines_JA8945_%2810146356794%29.jpg" },
+    { letter: "ظ", word: "ظل", image: "https://upload.wikimedia.org/wikipedia/commons/2/23/Shadow_on_road_-_geograph.org.uk_-_1161609.jpg" },
+    { letter: "ع", word: "عين", image: "https://upload.wikimedia.org/wikipedia/commons/4/46/Human_eye_closeup_2.jpg" },
+    { letter: "غ", word: "غزال", image: "https://upload.wikimedia.org/wikipedia/commons/7/79/Gazella_gazella_-Israel-8a.jpg" },
+    { letter: "ف", word: "فيل", image: "https://upload.wikimedia.org/wikipedia/commons/6/63/African_elephant_warning_raised_trunk.jpg" },
+    { letter: "ق", word: "قرد", image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Banana_lover.JPG" },
+    { letter: "ك", word: "كتاب", image: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Book_icon.svg" },
+    { letter: "ل", word: "لبن", image: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Glass_of_milk_on_tablecloth.jpg" },
+    { letter: "م", word: "ماء", image: "https://upload.wikimedia.org/wikipedia/commons/3/37/Water_drop_001.jpg" },
+    { letter: "ن", word: "نار", image: "https://upload.wikimedia.org/wikipedia/commons/1/15/Fire_icon.svg" },
+    { letter: "ه", word: "هاتف", image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Smartphone_icon.svg" },
+    { letter: "و", word: "وردة", image: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Rose_flower_in_nature_%282%29.jpg" },
+    { letter: "ي", word: "يد", image: "https://upload.wikimedia.org/wikipedia/commons/2/28/Hand_icon.svg" }
   ];
 
-  const lettersListEl = document.getElementById('letters-list');
-  const imagesGridEl = document.getElementById('images-grid');
-  const messageEl = document.getElementById('message');
-
-  // Shuffle letters for drag list so it's not always in same order
   function shuffle(array) {
-    for(let i=array.length-1; i>0; i--){
-      const j = Math.floor(Math.random() * (i+1));
+    for(let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
   }
 
-  const shuffledLetters = shuffle([...data]);
+  const lettersListEl = document.getElementById('letters-list');
+  const imagesGridEl = document.getElementById('images-grid');
+  const messageEl = document.getElementById('message');
 
-  // Create draggable letters
+  const shuffledLetters = shuffle([...data]);
+  const shuffledImages = shuffle([...data]);
+
   shuffledLetters.forEach(({letter}, i) => {
     const letterDiv = document.createElement('div');
     letterDiv.textContent = letter;
@@ -255,8 +286,7 @@
     lettersListEl.appendChild(letterDiv);
   });
 
-  // Create image cards with drop zones
-  data.forEach(({image, word, letter}, i) => {
+  shuffledImages.forEach(({image, word, letter}, i) => {
     const card = document.createElement('div');
     card.classList.add('card');
     card.id = `card-${i}`;
@@ -264,15 +294,13 @@
     const cardInner = document.createElement('div');
     cardInner.classList.add('card-inner');
 
-    // Front side with image and drop zone
     const cardFront = document.createElement('div');
     cardFront.classList.add('card-front');
     cardFront.innerHTML = `
       <img src="${image}" alt="${word}" loading="lazy" />
-      <div class="drop-zone" data-letter="${letter}">Drop letter here</div>
+      <div class="drop-zone" data-letter="${letter}" tabindex="0" aria-label="Drop zone for letter ${letter}">اسحب الحرف هنا</div>
     `;
 
-    // Back side with Arabic word
     const cardBack = document.createElement('div');
     cardBack.classList.add('card-back');
     cardBack.textContent = word;
@@ -283,52 +311,75 @@
     imagesGridEl.appendChild(card);
   });
 
-  // Drag & drop events on drop zones
   imagesGridEl.querySelectorAll('.drop-zone').forEach(zone => {
     zone.addEventListener('dragover', e => {
       e.preventDefault();
-      zone.style.borderColor = '#3a0ca3';
-      zone.style.color = '#3a0ca3';
+      zone.style.borderColor = '#30c368';
+      zone.style.color = '#30c368';
     });
     zone.addEventListener('dragleave', e => {
-      zone.style.borderColor = '#8e7cc3';
-      zone.style.color = '#aaa';
+      zone.style.borderColor = '#ff4da6';
+      zone.style.color = '#ff7fcf';
     });
     zone.addEventListener('drop', e => {
       e.preventDefault();
-      zone.style.borderColor = '#8e7cc3';
-      zone.style.color = '#aaa';
+      zone.style.borderColor = '#ff4da6';
+      zone.style.color = '#ff7fcf';
 
       const draggedLetter = e.dataTransfer.getData('text/plain');
       const expectedLetter = zone.dataset.letter;
 
       if (draggedLetter === expectedLetter) {
-        // Correct match!
         const card = zone.closest('.card');
         card.classList.add('flipped');
-
-        // Remove dragged letter from letters list
+        zone.classList.add('correct');
+        zone.textContent = "✔️ ممتاز!";
         const draggedEl = document.querySelector(`.letter[data-letter='${draggedLetter}']`);
-        if (draggedEl) {
-          draggedEl.remove();
-        }
-
-        showMessage('Correct! 🎉', true);
+        if (draggedEl) draggedEl.remove();
+        showMessage('رائع! الحرف صحيح 🎉', true);
       } else {
-        // Incorrect
-        showMessage('Try again! ❌', false);
+        showMessage('حاول مرة أخرى ❌', false);
+      }
+    });
+
+    // Make it accessible via keyboard (Enter key)
+    zone.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const expectedLetter = zone.dataset.letter;
+        const letterEls = [...lettersListEl.children];
+        const match = letterEls.find(l => l.dataset.letter === expectedLetter);
+        if (match) {
+          // simulate drop
+          const card = zone.closest('.card');
+          card.classList.add('flipped');
+          zone.classList.add('correct');
+          zone.textContent = "✔️ ممتاز!";
+          match.remove();
+          showMessage('رائع! الحرف صحيح 🎉', true);
+        } else {
+          showMessage('حاول سحب الحرف الصحيح! ❌', false);
+        }
       }
     });
   });
 
   function showMessage(text, success) {
     messageEl.textContent = text;
-    messageEl.style.backgroundColor = success ? '#3a0ca3' : '#a32a2a';
-    messageEl.classList.add('show');
-    setTimeout(() => {
+    messageEl.className = 'show';
+    if(success) {
+      messageEl.style.backgroundColor = '#6adc98';
+      messageEl.style.color = '#00531b';
+      messageEl.classList.remove('error');
+    } else {
+      messageEl.style.backgroundColor = '#ff5f5f';
+      messageEl.style.color = '#7b0000';
+      messageEl.classList.add('error');
+    }
+    clearTimeout(showMessage.timeout);
+    showMessage.timeout = setTimeout(() => {
       messageEl.classList.remove('show');
       messageEl.textContent = '';
-    }, 1500);
+    }, 1800);
   }
 </script>
 

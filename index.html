@@ -3,273 +3,157 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Arabic Alphabet Matching Game</title>
+<title>لعبة الحروف – صِل الحرف بالصورة</title>
 <style>
   body {
-    font-family: 'Arial', sans-serif;
+    font-family: Arial, sans-serif;
     background-image: url('https://cdn.pixabay.com/photo/2018/03/29/20/10/pastel-clouds-3278337_1280.jpg');
-    background-repeat: no-repeat;
     background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
     margin: 0;
-    padding: 0;
+    padding: 20px;
     color: #333;
   }
-
   .game-container {
     background: rgba(255, 255, 255, 0.9);
     max-width: 900px;
-    margin: 2rem auto;
+    margin: auto;
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
   }
-
   h1 {
     text-align: center;
-    font-size: 2.5rem;
+    font-size: 2rem;
     margin-bottom: 20px;
   }
-
   .game-grid {
     display: flex;
     justify-content: space-between;
     gap: 30px;
   }
-
   .letters, .cards {
     flex: 1;
-  }
-
-  .letters {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 10px;
     justify-content: center;
   }
-
   .letter {
-    cursor: pointer;
     background: #f0c04a;
-    border-radius: 10px;
+    border-radius: 8px;
     font-size: 2rem;
-    width: 60px;
-    height: 60px;
-    line-height: 60px;
-    text-align: center;
+    width: 60px; height: 60px;
+    display:flex;
+    align-items:center; justify-content:center;
+    cursor: pointer;
     user-select: none;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    transition: background 0.3s;
   }
-
-  .letter:hover {
-    background: #f5d87a;
+  .letter.selected {
+    border: 3px solid #f08a0c;
   }
-
-  .cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-  }
-
   .card {
     width: 120px;
     height: 150px;
-    perspective: 800px;
+    perspective: 600px;
   }
-
   .card-inner {
     position: relative;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.8s;
+    width: 100%; height: 100%;
+    transition: transform 0.6s;
     transform-style: preserve-3d;
-    cursor: pointer;
+    border-radius: 12px;
   }
-
   .card.flipped .card-inner {
     transform: rotateY(180deg);
   }
-
   .card-front, .card-back {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 15px;
+    width: 100%; height: 100%;
     backface-visibility: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  }
-
-  .card-front {
-    background: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 3px solid #f0c04a;
-  }
-
-  .card-front img {
-    max-width: 90px;
-    max-height: 90px;
     border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
   }
-
+  .card-front img {
+    max-width: 90%; height: auto;
+    border-radius: 8px;
+  }
   .card-back {
     background: #f0c04a;
-    color: #fff;
+    color: white;
     transform: rotateY(180deg);
-    font-size: 1.6rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 3px solid #f0c04a;
+    font-size: 1.2rem;
+    font-weight: bold;
   }
-
-  .matched {
-    cursor: default;
-    opacity: 0.6;
-  }
-
-  /* Responsive for smaller screens */
-  @media (max-width: 700px) {
-    .game-grid {
-      flex-direction: column;
-      align-items: center;
-    }
-    .letters, .cards {
-      width: 100%;
-      justify-content: center;
-    }
-    .card {
-      width: 90px;
-      height: 120px;
-    }
+  @media(max-width:700px){
+    .game-grid { flex-direction: column; }
   }
 </style>
 </head>
 <body>
-  <div class="game-container">
-    <h1>لعبة الحروف العربية - صِل الحرف بالصورة</h1>
-    <div class="game-grid">
-      <div class="letters" id="letters"></div>
-      <div class="cards" id="cards"></div>
-    </div>
+
+<div class="game-container">
+  <h1>لعبة تطابق الحروف والصور</h1>
+  <div class="game-grid">
+    <div class="letters" id="letters"></div>
+    <div class="cards" id="cards"></div>
   </div>
+</div>
 
 <script>
   const flashcards = [
-    { letter: 'أ', word: 'تفاحة', image: 'https://cdn.pixabay.com/photo/2016/08/11/23/51/apple-1582871_1280.png' },
-    { letter: 'ب', word: 'برتقال', image: 'https://cdn.pixabay.com/photo/2018/03/30/14/43/orange-3273983_1280.png' },
-    { letter: 'ج', word: 'جزر', image: 'https://cdn.pixabay.com/photo/2014/04/03/11/58/carrots-309232_1280.png' },
-    { letter: 'د', word: 'تمر', image: 'https://cdn.pixabay.com/photo/2017/01/20/00/30/dates-1990568_1280.png' },
-    { letter: 'ر', word: 'رمان', image: 'https://cdn.pixabay.com/photo/2018/08/14/13/23/pomegranate-3601623_1280.png' },
-    { letter: 'س', word: 'سمكة', image: 'https://cdn.pixabay.com/photo/2016/03/27/21/50/fish-1283746_1280.png' },
-    { letter: 'ط', word: 'طماطم', image: 'https://cdn.pixabay.com/photo/2016/03/05/19/02/tomato-1238254_1280.png' },
-    { letter: 'ف', word: 'فراولة', image: 'https://cdn.pixabay.com/photo/2017/07/16/10/43/strawberry-2504622_1280.png' },
-    { letter: 'ك', word: 'كيوي', image: 'https://cdn.pixabay.com/photo/2014/04/03/10/26/kiwi-309139_1280.png' },
-    { letter: 'م', word: 'موز', image: 'https://cdn.pixabay.com/photo/2018/01/21/11/33/bananas-3091425_1280.png' },
-    { letter: 'ن', word: 'نعناع', image: 'https://cdn.pixabay.com/photo/2017/04/24/22/11/mint-2251638_1280.png' },
-    { letter: 'و', word: 'وردة', image: 'https://cdn.pixabay.com/photo/2014/04/02/14/01/rose-305444_1280.png' },
-    { letter: 'ي', word: 'يقطين', image: 'https://cdn.pixabay.com/photo/2017/10/17/12/06/pumpkin-2861224_1280.png' },
+    { letter: 'أ', word: 'تفاحة', image: 'https://pics.clipartpng.com/midle/Apple_PNG_Clip_Art-1467.png' },
+    { letter: 'س', word: 'سمكة', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Underwater/Fish_PNG_Clip_Art_Image.png?m=1629833603' },
+    // add more with direct .png links from ClipartPNG or yopriceville...
   ];
 
-  // Shuffle helper function
-  function shuffle(array) {
-    let currentIndex = array.length, randomIndex;
-    while (currentIndex !== 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-    }
-    return array;
-  }
+  function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
-  const lettersContainer = document.getElementById('letters');
-  const cardsContainer = document.getElementById('cards');
+  let selected = null, matches = 0;
+  const lettersDiv = document.getElementById('letters');
+  const cardsDiv = document.getElementById('cards');
 
-  let selectedLetter = null;
-  let matchedCount = 0;
+  shuffle(flashcards).forEach(({letter}) => {
+    const el = document.createElement('div');
+    el.className = 'letter';
+    el.textContent = letter;
+    el.onclick = () => {
+      document.querySelectorAll('.letter').forEach(l=>l.classList.remove('selected'));
+      el.classList.add('selected');
+      selected = letter;
+    };
+    lettersDiv.appendChild(el);
+  });
 
-  // Show shuffled letters
-  function displayLetters() {
-    const shuffled = shuffle([...flashcards]);
-    lettersContainer.innerHTML = '';
-    shuffled.forEach(item => {
-      const letterDiv = document.createElement('div');
-      letterDiv.classList.add('letter');
-      letterDiv.textContent = item.letter;
-      letterDiv.dataset.letter = item.letter;
-      letterDiv.addEventListener('click', () => {
-        if (letterDiv.classList.contains('matched')) return;
-        if (selectedLetter) {
-          selectedLetter.classList.remove('selected');
-        }
-        selectedLetter = letterDiv;
-        letterDiv.classList.add('selected');
-      });
-      lettersContainer.appendChild(letterDiv);
-    });
-  }
+  shuffle(flashcards).forEach(({letter, word, image}) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.letter = letter;
 
-  // Show shuffled image cards
-  function displayCards() {
-    const shuffled = shuffle([...flashcards]);
-    cardsContainer.innerHTML = '';
-    shuffled.forEach(item => {
-      const card = document.createElement('div');
-      card.classList.add('card');
-      card.dataset.letter = item.letter;
+    const inner = document.createElement('div'); inner.className = 'card-inner';
+    const front = document.createElement('div'); front.className = 'card-front';
+    const img = document.createElement('img'); img.src = image; img.alt = word;
+    front.appendChild(img);
+    const back = document.createElement('div'); back.className = 'card-back';
+    back.textContent = word;
 
-      const cardInner = document.createElement('div');
-      cardInner.classList.add('card-inner');
+    inner.append(front, back);
+    card.appendChild(inner);
 
-      const cardFront = document.createElement('div');
-      cardFront.classList.add('card-front');
-      const img = document.createElement('img');
-      img.src = item.image;
-      img.alt = item.word;
-      cardFront.appendChild(img);
-
-      const cardBack = document.createElement('div');
-      cardBack.classList.add('card-back');
-      cardBack.textContent = item.word;
-
-      cardInner.appendChild(cardFront);
-      cardInner.appendChild(cardBack);
-      card.appendChild(cardInner);
-
-      card.addEventListener('click', () => {
-        if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
-        if (!selectedLetter) {
-          alert('الرجاء اختيار حرف أولاً');
-          return;
-        }
-        if (selectedLetter.dataset.letter === card.dataset.letter) {
-          card.classList.add('flipped', 'matched');
-          selectedLetter.classList.add('matched');
-          selectedLetter.classList.remove('selected');
-          selectedLetter = null;
-          matchedCount++;
-          if (matchedCount === flashcards.length) {
-            setTimeout(() => alert('مبروك! لقد أتممت اللعبة!'), 300);
-          }
-        } else {
-          alert('حاول مرة أخرى!');
-          if (selectedLetter) {
-            selectedLetter.classList.remove('selected');
-            selectedLetter = null;
-          }
-        }
-      });
-
-      cardsContainer.appendChild(card);
-    });
-  }
-
-  displayLetters();
-  displayCards();
+    card.onclick = () => {
+      if (!selected) return alert('اختر الحرف أولًا');
+      if (selected === card.dataset.letter) {
+        card.classList.add('flipped');
+        document.querySelector('.letter.selected').classList.add('matched');
+        selected = null; matches++;
+        if (matches === flashcards.length) setTimeout(() => alert('مبروك! انتهيت الصغار 🎉'), 100);
+      } else { alert('حاول مرة أخرى'); }
+    };
+    cardsDiv.appendChild(card);
+  });
 </script>
+
 </body>
 </html>

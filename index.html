@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arabic Alphabet Matching Game - Full</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+    }
+    .game-container {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    .column {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px #ccc;
+      width: 220px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .item {
+      cursor: pointer;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 24px;
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+    .item:last-child {
+      border-bottom: none;
+    }
+    .item:hover {
+      background-color: #e0d7ff;
+    }
+    .selected {
+      background-color: #a8d5ff;
+    }
+    .matched {
+      background-color: #a8f0a5;
+      cursor: default;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+      height: 24px;
+      color: #444;
+    }
+    @media (max-width: 600px) {
+      .game-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .column {
+        width: 80%;
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Arabic Alphabet Matching Game - Full Alphabet</h1>
+  <p>Click a letter on the left, then click the matching English name on the right.</p>
+
+  <div class="game-container">
+    <div class="column" id="letters-column">
+      <h3>Arabic Letters</h3>
+    </div>
+    <div class="column" id="names-column">
+      <h3>English Names</h3>
+    </div>
+  </div>
+
+  <div id="message"></div>
+
+  <script>
+    const pairs = [
+      { letter: "أ", name: "Alif" },
+      { letter: "ب", name: "Bāʼ" },
+      { letter: "ت", name: "Tāʼ" },
+      { letter: "ث", name: "Thāʼ" },
+      { letter: "ج", name: "Jīm" },
+      { letter: "ح", name: "Ḥāʼ" },
+      { letter: "خ", name: "Khāʼ" },
+      { letter: "د", name: "Dāl" },
+      { letter: "ذ", name: "Dhāl" },
+      { letter: "ر", name: "Rāʼ" },
+      { letter: "ز", name: "Zāy" },
+      { letter: "س", name: "Sīn" },
+      { letter: "ش", name: "Shīn" },
+      { letter: "ص", name: "Ṣād" },
+      { letter: "ض", name: "Ḍād" },
+      { letter: "ط", name: "Ṭāʼ" },
+      { letter: "ظ", name: "Ẓāʼ" },
+      { letter: "ع", name: "ʿAyn" },
+      { letter: "غ", name: "Ghayn" },
+      { letter: "ف", name: "Fāʼ" },
+      { letter: "ق", name: "Qāf" },
+      { letter: "ك", name: "Kāf" },
+      { letter: "ل", name: "Lām" },
+      { letter: "م", name: "Mīm" },
+      { letter: "ن", name: "Nūn" },
+      { letter: "ه", name: "Hāʼ" },
+      { letter: "و", name: "Wāw" },
+      { letter: "ي", name: "Yāʼ" }
+    ];
+
+    // Shuffle function
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    const lettersColumn = document.getElementById('letters-column');
+    const namesColumn = document.getElementById('names-column');
+    const messageEl = document.getElementById('message');
+
+    let selectedLetter = null;
+    let selectedName = null;
+    let matches = 0;
+
+    const letters = shuffle(pairs.map(p => ({ ...p })));
+    const names = shuffle(pairs.map(p => ({ ...p })));
+
+    function clearSelections() {
+      selectedLetter = null;
+      selectedName = null;
+      document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
+    }
+
+    function renderItems() {
+      lettersColumn.innerHTML = '<h3>Arabic Letters</h3>';
+      namesColumn.innerHTML = '<h3>English Names</h3>';
+
+      letters.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.textContent = item.letter;
+        div.classList.add('item');
+        div.dataset.index = idx;
+        div.dataset.type = 'letter';
+        div.addEventListener('click', onItemClick);
+        lettersColumn.appendChild(div);
+      });
+
+      names.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.textContent = item.name;
+        div.classList.add('item');
+        div.dataset.index = idx;
+        div.dataset.type = 'name';
+        div.addEventListener('click', onItemClick);
+        namesColumn.appendChild(div);
+      });
+    }
+
+    function onItemClick(e) {
+      const el = e.target;
+      if (el.classList.contains('matched')) return;
+
+      const type = el.dataset.type;
+      const idx = parseInt(el.dataset.index);
+
+      if (type === 'letter') {
+        if (selectedLetter === el) {
+          el.classList.remove('selected');
+          selectedLetter = null;
+        } else {
+          clearSelections();
+          selectedLetter = el;
+          el.classList.add('selected');
+        }
+      } else if (type === 'name') {
+        if (selectedName === el) {
+          el.classList.remove('selected');
+          selectedName = null;
+        } else {
+          if (selectedLetter == null) {
+            messageEl.textContent = "Please select a letter first!";
+            return;
+          }
+          selectedName = el;
+          el.classList.add('selected');
+
+          const letterIdx = selectedLetter.dataset.index;
+          const nameIdx = selectedName.dataset.index;
+
+          if (letters[letterIdx].name === names[nameIdx].name) {
+            selectedLetter.classList.add('matched');
+            selectedName.classList.add('matched');
+            messageEl.textContent = "✅ Correct!";
+            matches++;
+            if (matches === pairs.length) {
+              messageEl.textContent = "🎉 You matched all pairs! Well done!";
+            }
+          } else {
+            messageEl.textContent = "❌ Try again.";
+            setTimeout(() => {
+              selectedLetter.classList.remove('selected');
+              selectedName.classList.remove('selected');
+              messageEl.textContent = "";
+            }, 1000);
+          }
+
+          selectedLetter = null;
+          selectedName = null;
+        }
+      }
+    }
+
+    renderItems();
+  </script>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>لعبة الحروف – صِل الحرف بالصورة</title>
+<title>لعبة تطابق الحروف والصور</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -30,6 +30,7 @@
     display: flex;
     justify-content: space-between;
     gap: 30px;
+    flex-wrap: wrap;
   }
   .letters, .cards {
     flex: 1;
@@ -37,6 +38,7 @@
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
+    min-width: 280px;
   }
   .letter {
     background: #f0c04a;
@@ -47,9 +49,15 @@
     align-items:center; justify-content:center;
     cursor: pointer;
     user-select: none;
+    transition: border 0.3s;
   }
   .letter.selected {
     border: 3px solid #f08a0c;
+  }
+  .letter.matched {
+    background: #8bc34a;
+    color: white;
+    cursor: default;
   }
   .card {
     width: 120px;
@@ -62,6 +70,7 @@
     transition: transform 0.6s;
     transform-style: preserve-3d;
     border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   }
   .card.flipped .card-inner {
     transform: rotateY(180deg);
@@ -71,10 +80,10 @@
     width: 100%; height: 100%;
     backface-visibility: hidden;
     border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     display:flex;
     justify-content:center;
     align-items:center;
+    padding: 5px;
   }
   .card-front img {
     max-width: 90%; height: auto;
@@ -86,9 +95,11 @@
     transform: rotateY(180deg);
     font-size: 1.2rem;
     font-weight: bold;
+    text-align: center;
   }
   @media(max-width:700px){
     .game-grid { flex-direction: column; }
+    .letters, .cards { min-width: auto; justify-content: center;}
   }
 </style>
 </head>
@@ -105,54 +116,108 @@
 <script>
   const flashcards = [
     { letter: 'أ', word: 'تفاحة', image: 'https://pics.clipartpng.com/midle/Apple_PNG_Clip_Art-1467.png' },
-    { letter: 'س', word: 'سمكة', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Underwater/Fish_PNG_Clip_Art_Image.png?m=1629833603' },
-    // add more with direct .png links from ClipartPNG or yopriceville...
+    { letter: 'ب', word: 'بطة', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Duck_PNG_Clipart.png' },
+    { letter: 'ت', word: 'تمساح', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Reptiles-PNG/Crocodile_PNG_Clipart.png' },
+    { letter: 'ث', word: 'ثعلب', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Fox_PNG_Clipart.png' },
+    { letter: 'ج', word: 'جمل', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Camel_PNG_Clipart.png' },
+    { letter: 'ح', word: 'حصان', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Horse_PNG_Clipart.png' },
+    { letter: 'خ', word: 'خروف', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Lamb_PNG_Clipart.png' },
+    { letter: 'د', word: 'دب', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Bear_PNG_Clipart.png' },
+    { letter: 'ذ', word: 'ذئب', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Wolf_PNG_Clipart.png' },
+    { letter: 'ر', word: 'رمان', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Fruits-PNG/Pomegranate_PNG_Clip_Art.png' },
+    { letter: 'ز', word: 'زرافة', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Giraffe_PNG_Clipart.png' },
+    { letter: 'س', word: 'سمكة', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Underwater/Fish_PNG_Clip_Art_Image.png' },
+    { letter: 'ش', word: 'شمس', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Nature-PNG/Sunshine_PNG_Clipart.png' },
+    { letter: 'ص', word: 'صقر', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Birds-PNG/Hawk_PNG_Clipart.png' },
+    { letter: 'ض', word: 'ضفدع', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Frog_PNG_Clipart.png' },
+    { letter: 'ط', word: 'طائرة', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Transport-PNG/Airplane_PNG_Clipart_Image.png' },
+    { letter: 'ظ', word: 'ظرف', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Office-PNG/Envelope_PNG_Clipart.png' },
+    { letter: 'ع', word: 'عنب', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Fruits-PNG/Grapes_PNG_Clip_Art.png' },
+    { letter: 'غ', word: 'غزال', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Deer_PNG_Clipart.png' },
+    { letter: 'ف', word: 'فراولة', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Fruits-PNG/Strawberry_PNG_Clipart.png' },
+    { letter: 'ق', word: 'قرد', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Monkey_PNG_Clipart.png' },
+    { letter: 'ك', word: 'كتاب', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/School-PNG/Book_PNG_Clipart.png' },
+    { letter: 'ل', word: 'ليمون', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Fruits-PNG/Lemon_PNG_Clipart.png' },
+    { letter: 'م', word: 'موز', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Fruits-PNG/Banana_PNG_Clipart.png' },
+    { letter: 'ن', word: 'نمر', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Animals-PNG/Tiger_PNG_Clipart.png' },
+    { letter: 'ه', word: 'هدهد', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Birds-PNG/Bird_PNG_Clipart.png' },
+    { letter: 'و', word: 'وردة', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Flowers-PNG/Rose_Flower_PNG_Clipart.png' },
+    { letter: 'ي', word: 'يد', image: 'https://gallery.yopriceville.com/var/resizes/Free-Clipart-Pictures/Hands-PNG/Hand_PNG_Clipart.png' },
   ];
 
-  function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  // Shuffle helper
+  function shuffle(a){
+    for(let i = a.length -1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
 
-  let selected = null, matches = 0;
+  let selected = null;
+  let matches = 0;
+
   const lettersDiv = document.getElementById('letters');
   const cardsDiv = document.getElementById('cards');
 
+  // Render letters shuffled
   shuffle(flashcards).forEach(({letter}) => {
     const el = document.createElement('div');
     el.className = 'letter';
     el.textContent = letter;
+    el.title = `اضغط لاختيار الحرف ${letter}`;
     el.onclick = () => {
-      document.querySelectorAll('.letter').forEach(l=>l.classList.remove('selected'));
+      if (el.classList.contains('matched')) return; // can't reselect matched
+      document.querySelectorAll('.letter').forEach(l => l.classList.remove('selected'));
       el.classList.add('selected');
       selected = letter;
     };
     lettersDiv.appendChild(el);
   });
 
+  // Render cards shuffled
   shuffle(flashcards).forEach(({letter, word, image}) => {
     const card = document.createElement('div');
     card.className = 'card';
     card.dataset.letter = letter;
 
-    const inner = document.createElement('div'); inner.className = 'card-inner';
-    const front = document.createElement('div'); front.className = 'card-front';
-    const img = document.createElement('img'); img.src = image; img.alt = word;
+    const inner = document.createElement('div');
+    inner.className = 'card-inner';
+
+    const front = document.createElement('div');
+    front.className = 'card-front';
+    const img = document.createElement('img');
+    img.src = image;
+    img.alt = word;
+    img.loading = 'lazy';
     front.appendChild(img);
-    const back = document.createElement('div'); back.className = 'card-back';
+
+    const back = document.createElement('div');
+    back.className = 'card-back';
     back.textContent = word;
 
     inner.append(front, back);
     card.appendChild(inner);
 
     card.onclick = () => {
-      if (!selected) return alert('اختر الحرف أولًا');
+      if (!selected) return; // no letter selected
       if (selected === card.dataset.letter) {
         card.classList.add('flipped');
-        document.querySelector('.letter.selected').classList.add('matched');
-        selected = null; matches++;
-        if (matches === flashcards.length) setTimeout(() => alert('مبروك! انتهيت الصغار 🎉'), 100);
-      } else { alert('حاول مرة أخرى'); }
+        // mark letter matched and disable clicking
+        const letterDiv = [...lettersDiv.children].find(l => l.textContent === selected);
+        letterDiv.classList.add('matched');
+        letterDiv.classList.remove('selected');
+        selected = null;
+        matches++;
+        if(matches === flashcards.length){
+          setTimeout(() => alert('🎉 تهانينا! لقد أكملت اللعبة!'), 300);
+        }
+      }
     };
+
     cardsDiv.appendChild(card);
   });
+
 </script>
 
 </body>

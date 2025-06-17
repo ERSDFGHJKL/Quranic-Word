@@ -32,17 +32,17 @@
     gap: 20px;
     flex-wrap: wrap;
   }
-  .letters, .cards {
+  .letters {
     flex: 1;
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 6px;
+    gap: 0;          /* NO gap */
     justify-content: center;
     min-width: 280px;
   }
   .letter {
     background: #f0c04a;
-    border-radius: 8px;
+    border-radius: 0;  /* remove rounding for flush edges */
     font-size: 2.2rem;
     width: 50px; height: 50px;
     display:flex;
@@ -50,6 +50,9 @@
     cursor: pointer;
     user-select: none;
     transition: border 0.3s;
+    border: 1px solid #fff; /* thin white border */
+    box-sizing: border-box;
+    margin: 0; /* no margin */
   }
   .letter.selected {
     border: 3px solid #f08a0c;
@@ -115,7 +118,7 @@
 
 <script>
   const flashcards = [
-    { letter: 'أ', word: 'تفاحة', image: 'https://cdn.pixabay.com/photo/2013/07/13/10/07/apple-157757_1280.png' },
+    { letter: 'أ', word: 'تفاحة', image: 'https://clipart-library.com/clipart/2076313.htm' },
     { letter: 'ب', word: 'بطة', image: 'https://cdn.pixabay.com/photo/2017/01/31/14/13/duck-2024647_1280.png' },
     { letter: 'ت', word: 'تمساح', image: 'https://upload.wikimedia.org/wikipedia/commons/6/66/Alligator_mississippiensis_WC.jpg' },
     { letter: 'ث', word: 'ثعلب', image: 'https://cdn.pixabay.com/photo/2016/12/28/14/42/fox-1935496_1280.png' },
@@ -129,7 +132,7 @@
     { letter: 'س', word: 'سمكة', image: 'https://cdn.pixabay.com/photo/2014/04/02/11/27/fish-305597_1280.png' },
     { letter: 'ش', word: 'شمس', image: 'https://cdn.pixabay.com/photo/2016/03/31/19/03/sun-1296215_1280.png' },
     { letter: 'ص', word: 'صقر', image: 'https://cdn.pixabay.com/photo/2012/04/01/17/29/falcon-24494_1280.png' },
-    { letter: 'ض', word: 'ضفدع', image: 'https://upload.wikimedia.org/wikipedia/commons/1/17/Green_frog_%28Rana_clamitans%29.jpg' }, 
+    { letter: 'ض', word: 'ضفدع', image: 'https://upload.wikimedia.org/wikipedia/commons/1/17/Green_frog_%28Rana_clamitans%29.jpg' },
     { letter: 'ط', word: 'طائرة', image: 'https://cdn.pixabay.com/photo/2014/04/02/10/23/airplane-305387_1280.png' },
     { letter: 'ظ', word: 'ظرف', image: 'https://cdn.pixabay.com/photo/2012/04/14/16/42/envelope-34659_1280.png' },
     { letter: 'ع', word: 'عنب', image: 'https://cdn.pixabay.com/photo/2018/08/06/22/36/grapes-3581230_1280.png' },

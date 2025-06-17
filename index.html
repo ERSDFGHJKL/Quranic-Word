@@ -10,37 +10,24 @@
     background-color: #f0f0f0;
     color: #333;
     margin: 20px;
-    text-align: center;
   }
   h1 {
     color: #222;
+    text-align: center;
+    margin-bottom: 20px;
   }
-  #letters {
+  #container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    max-width: 400px;
-    margin: 20px auto;
-  }
-  #letters div {
-    font-size: 32px;
-    cursor: pointer;
-    padding: 10px 8px;
-    margin: 0; /* No space */
-    border: 2px solid transparent;
-    user-select: none;
-    width: 20%; /* 5 letters per row */
-    box-sizing: border-box;
-  }
-  #letters div:hover {
-    background-color: #d0e3ff;
+    gap: 40px;
+    max-width: 960px;
+    margin: 0 auto 40px auto;
   }
   #game {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    max-width: 800px;
-    margin: 0 auto 40px auto;
+    justify-content: flex-start;
+    width: 620px;
   }
   .card {
     width: 130px;
@@ -88,11 +75,35 @@
     transform: rotateY(180deg);
     padding: 0 5px;
   }
+
+  #letters {
+    display: flex;
+    flex-wrap: wrap;
+    width: 280px;
+    max-width: 280px;
+    justify-content: flex-start;
+    user-select: none;
+  }
+  #letters div {
+    font-size: 32px;
+    cursor: pointer;
+    padding: 10px 8px;
+    margin: 0;
+    border: 2px solid transparent;
+    width: 20%; /* 5 letters per row */
+    box-sizing: border-box;
+    text-align: center;
+  }
+  #letters div:hover {
+    background-color: #d0e3ff;
+  }
+
   #message {
     font-size: 20px;
     margin-top: 10px;
-    height: 28px;
+    text-align: center;
     color: #222;
+    min-height: 28px;
   }
 </style>
 </head>
@@ -100,14 +111,14 @@
 
 <h1>Arabic Alphabet Matching Game</h1>
 
-<div id="letters"></div>
-
-<div id="game"></div>
+<div id="container">
+  <div id="game"></div>
+  <div id="letters"></div>
+</div>
 
 <div id="message">Select a letter first, then click an image.</div>
 
 <script>
-  // Arabic letters (26 for this game)
   const arabicLetters = [
     "ا", "ب", "ت", "ث", "ج",
     "ح", "خ", "د", "ذ", "ر",
@@ -116,34 +127,33 @@
     "ق", "ك", "ل", "م", "ن", "ه"
   ];
 
-  // Words and images starting with those letters
   const flashcards = [
-    { letter: "ا", word: "أسد", image: "https://th.bing.com/th/id/R.6f00f223683a1b93d58b7a34f8da81a3?rik=3r5wvOMT3CQ2bw&riu=http%3a%2f%2fclipart-library.com%2fimg%2f1209767.png&ehk=9kF9RaS0cCjA1R8ihZBq1vYwI7WeAWh1trbYZnjY7Tc%3d&risl=&pid=ImgRaw&r=0" }, // Lion
-    { letter: "ب", word: "بقرة", image: "https://cdn.clipart.email/4d76db9a3d1f1d3a4ca76044ef61aa06_cow-clip-art-png-clipart_600-537.png" }, // Cow
-    { letter: "ت", word: "تفاحة", image: "https://clipart.info/images/ccovers/1514191658apple-clip-art-png.png" }, // Apple
-    { letter: "ث", word: "ثعلب", image: "https://cdn.clipart.email/8b38a2d6844f68e004c0e96b01f97a8a_fox-clipart_800-509.png" }, // Fox
-    { letter: "ج", word: "جمل", image: "https://cdn.clipart.email/ffcc3b110f24f7d8b59eb0df2edfb02a_camel-clipart-png-transparent_512-386.png" }, // Camel
-    { letter: "ح", word: "حصان", image: "https://cdn.clipart.email/8b4f5248e6d601248d8bb146c7f4e36a_horse-clip-art-png-clipart_600-420.png" }, // Horse
-    { letter: "خ", word: "خروف", image: "https://cdn.clipart.email/4dd40f5e2e789db4e0de5b34b78c4a42_sheep-clipart-transparent-background-animals-free-clipart_580-371.png" }, // Sheep
-    { letter: "د", word: "ديك", image: "https://cdn.clipart.email/6bb76e5e7f73ca01b71e527bfc628ad1_rooster-png-rooster-vector-png-488_544.png" }, // Rooster
-    { letter: "ذ", word: "ذئب", image: "https://cdn.clipart.email/4b5be5089f9d857b7963e9ef2588c215_wolf-clip-art-hd-png-download_1000-1000.png" }, // Wolf
-    { letter: "ر", word: "رنة", image: "https://cdn.clipart.email/04d10de2f8a0c97ee2e31e1f7a370dad_reindeer-png-transparent-images-png-only_693-693.png" }, // Reindeer
-    { letter: "ز", word: "زرافة", image: "https://cdn.clipart.email/0a0124dcb52cf6a5a9da26d07f7de9d8_giraffe-clipart-transparent-background-png-clip-art-image_512-512.png" }, // Giraffe
-    { letter: "س", word: "سمكة", image: "https://cdn.clipart.email/93e1176b2bce3d378e6f83d0e4f7bde6_fish-clip-art-transparent-png-clipart_600-600.png" }, // Fish
-    { letter: "ش", word: "شمعة", image: "https://cdn.clipart.email/f7dbf94f60e1ecb7fa00f09c217024f9_candle-clipart-transparent-background-clip-art-png_600-600.png" }, // Candle
-    { letter: "ص", word: "صقر", image: "https://cdn.clipart.email/8acb67f037c35f73a3f3ac77efb77e96_falcon-clipart-transparent-png-falcon-bird-clipart-png_600-600.png" }, // Falcon
-    { letter: "ض", word: "ضفدع", image: "https://cdn.clipart.email/cd1d39c564b416c51f93d9639d06b97e_frog-clip-art-transparent-background-png-clipart_512-512.png" }, // Frog
-    { letter: "ط", word: "طاووس", image: "https://cdn.clipart.email/e7e68a4644aaf81df38b2a948a72f805_peacock-clip-art-transparent-background-peacock-free-clipart_640-480.png" }, // Peacock
-    { letter: "ظ", word: "ظبي", image: "https://cdn.clipart.email/7c017174e5381a19b6f9399935b9a252_deer-clipart-png-transparent-deer-image_512-512.png" }, // Deer
-    { letter: "ع", word: "عصفور", image: "https://cdn.clipart.email/6ad8c1624b9f172d2213f7f8a95f6e55_bird-clipart-transparent-background-png-bird-clipart-png-1024_1024.png" }, // Bird
-    { letter: "غ", word: "غزال", image: "https://cdn.clipart.email/fd46b46e1e571f39e750c2d8dd43e3e1_ghazal-deer-vector-illustration-png_600-600.png" }, // Gazelle
-    { letter: "ف", word: "فيل", image: "https://th.bing.com/th/id/R.fa0704ba240c7b884b9b7ee94157fb7d?rik=0ohm9itoZO5W%2bg&riu=http%3a%2f%2fclipart-library.com%2fimg%2f1209767.png&ehk=j0pg0i%2fu05F%2bjJRWp94l3x7P0O2zHbMjsTAGh%2blsPQc%3d&risl=&pid=ImgRaw&r=0" }, // Elephant
-    { letter: "ق", word: "قرد", image: "https://cdn.clipart.email/f5a8ad2ed8e12f838d54f9b4f8e37513_monkey-clipart-transparent-background-png-clipart_512-512.png" }, // Monkey
-    { letter: "ك", word: "كنغر", image: "https://cdn.clipart.email/e0740c512db1b4d1378a4c1184ecdd10_kangaroo-clipart-transparent-background-clip-art_512-512.png" }, // Kangaroo
-    { letter: "ل", word: "لبوة", image: "https://cdn.clipart.email/4b90ce56ffae1f3b5f6c9b3fce99b7bb_lioness-clipart-transparent-background-clip-art-png_512-512.png" }, // Lioness
-    { letter: "م", word: "نمر", image: "https://cdn.clipart.email/d0a52a1e21a4a0a3be30ad6e4bfac4a5_tiger-clip-art-transparent-background-png-clipart_512-512.png" }, // Tiger
-    { letter: "ن", word: "نحلة", image: "https://cdn.clipart.email/bad6ae918b2b7e956c9c6820e70349e7_bee-clipart-transparent-background-clip-art-png_512-512.png" }, // Bee
-    { letter: "ه", word: "هدهد", image: "https://cdn.clipart.email/bf6a742987319ac6d29ff36d7e380d5b_hoopoe-clip-art-transparent-background-clip-art-png_512-512.png" }, // Hoopoe bird
+    { letter: "ا", word: "أسد", image: "https://th.bing.com/th/id/R.6f00f223683a1b93d58b7a34f8da81a3?rik=3r5wvOMT3CQ2bw&riu=http%3a%2f%2fclipart-library.com%2fimg%2f1209767.png&ehk=9kF9RaS0cCjA1R8ihZBq1vYwI7WeAWh1trbYZnjY7Tc%3d&risl=&pid=ImgRaw&r=0" },
+    { letter: "ب", word: "بقرة", image: "https://cdn.clipart.email/4d76db9a3d1f1d3a4ca76044ef61aa06_cow-clip-art-png-clipart_600-537.png" },
+    { letter: "ت", word: "تفاحة", image: "https://clipart.info/images/ccovers/1514191658apple-clip-art-png.png" },
+    { letter: "ث", word: "ثعلب", image: "https://cdn.clipart.email/8b38a2d6844f68e004c0e96b01f97a8a_fox-clipart_800-509.png" },
+    { letter: "ج", word: "جمل", image: "https://cdn.clipart.email/ffcc3b110f24f7d8b59eb0df2edfb02a_camel-clipart-png-transparent_512-386.png" },
+    { letter: "ح", word: "حصان", image: "https://cdn.clipart.email/8b4f5248e6d601248d8bb146c7f4e36a_horse-clip-art-png-clipart_600-420.png" },
+    { letter: "خ", word: "خروف", image: "https://cdn.clipart.email/4dd40f5e2e789db4e0de5b34b78c4a42_sheep-clipart-transparent-background-animals-free-clipart_580-371.png" },
+    { letter: "د", word: "ديك", image: "https://cdn.clipart.email/6bb76e5e7f73ca01b71e527bfc628ad1_rooster-png-rooster-vector-png-488_544.png" },
+    { letter: "ذ", word: "ذئب", image: "https://cdn.clipart.email/4b5be5089f9d857b7963e9ef2588c215_wolf-clip-art-hd-png-download_1000-1000.png" },
+    { letter: "ر", word: "رنة", image: "https://cdn.clipart.email/04d10de2f8a0c97ee2e31e1f7a370dad_reindeer-png-transparent-images-png-only_693-693.png" },
+    { letter: "ز", word: "زرافة", image: "https://cdn.clipart.email/0a0124dcb52cf6a5a9da26d07f7de9d8_giraffe-clipart-transparent-background-png-clip-art-image_512-512.png" },
+    { letter: "س", word: "سمكة", image: "https://cdn.clipart.email/93e1176b2bce3d378e6f83d0e4f7bde6_fish-clip-art-transparent-png-clipart_600-600.png" },
+    { letter: "ش", word: "شمعة", image: "https://cdn.clipart.email/f7dbf94f60e1ecb7fa00f09c217024f9_candle-clipart-transparent-background-clip-art-png_600-600.png" },
+    { letter: "ص", word: "صقر", image: "https://cdn.clipart.email/8acb67f037c35f73a3f3ac77efb77e96_falcon-clipart-transparent-png-falcon-bird-clipart-png_600-600.png" },
+    { letter: "ض", word: "ضفدع", image: "https://cdn.clipart.email/cd1d39c564b416c51f93d9639d06b97e_frog-clip-art-transparent-background-png-clipart_512-512.png" },
+    { letter: "ط", word: "طاووس", image: "https://cdn.clipart.email/e7e68a4644aaf81df38b2a948a72f805_peacock-clip-art-transparent-background-peacock-free-clipart_640-480.png" },
+    { letter: "ظ", word: "ظبي", image: "https://cdn.clipart.email/7c017174e5381a19b6f9399935b9a252_deer-clipart-png-transparent-deer-image_512-512.png" },
+    { letter: "ع", word: "عصفور", image: "https://cdn.clipart.email/6ad8c1624b9f172d2213f7f8a95f6e55_bird-clipart-transparent-background-png-bird-clipart-png-1024_1024.png" },
+    { letter: "غ", word: "غزال", image: "https://cdn.clipart.email/fd46b46e1e571f39e750c2d8dd43e3e1_ghazal-deer-vector-illustration-png_600-600.png" },
+    { letter: "ف", word: "فيل", image: "https://th.bing.com/th/id/R.fa0704ba240c7b884b9b7ee94157fb7d?rik=0ohm9itoZO5W%2bg&riu=http%3a%2f%2fclipart-library.com%2fimg%2f1209767.png&ehk=j0pg0i%2fu05F%2bjJRWp94l3x7P0O2zHbMjsTAGh%2blsPQc%3d&risl=&pid=ImgRaw&r=0" },
+    { letter: "ق", word: "قرد", image: "https://cdn.clipart.email/f5a8ad2ed8e12f838d54f9b4f8e37513_monkey-clipart-transparent-background-png-clipart_512-512.png" },
+    { letter: "ك", word: "كنغر", image: "https://cdn.clipart.email/e0740c512db1b4d1378a4c1184ecdd10_kangaroo-clipart-transparent-background-clip-art_512-512.png" },
+    { letter: "ل", word: "لبوة", image: "https://cdn.clipart.email/4b90ce56ffae1f3b5f6c9b3fce99b7bb_lioness-clipart-transparent-background-clip-art-png_512-512.png" },
+    { letter: "م", word: "نمر", image: "https://cdn.clipart.email/d0a52a1e21a4a0a3be30ad6e4bfac4a5_tiger-clip-art-transparent-background-png-clipart_512-512.png" },
+    { letter: "ن", word: "نحلة", image: "https://cdn.clipart.email/bad6ae918b2b7e956c9c6820e70349e7_bee-clipart-transparent-background-clip-art-png_512-512.png" },
+    { letter: "ه", word: "هدهد", image: "https://cdn.clipart.email/bf6a742987319ac6d29ff36d7e380d5b_hoopoe-clip-art-transparent-background-clip-art-png_512-512.png" },
   ];
 
   const lettersDiv = document.getElementById("letters");
@@ -219,18 +229,15 @@
       if (selectedLetter === card.dataset.letter) {
         card.classList.add("flipped");
         card.style.borderColor = "green";
-        // Flip the card visually by rotating inner div
         card.querySelector(".card-inner").style.transform = "rotateY(180deg)";
         messageDiv.textContent = `Great! "${selectedLetter}" matches "${card.querySelector(".card-back").textContent}". Select another letter.`;
 
-        // Reset letter selection and highlights
         selectedLetter = null;
         lettersDiv.querySelectorAll("div").forEach(l => (l.style.backgroundColor = ""));
       } else {
         card.style.borderColor = "red";
         messageDiv.textContent = "Oops! That's not the right match. Try again.";
 
-        // Reset red border after 1 second
         setTimeout(() => {
           if (!card.classList.contains("flipped")) {
             card.style.borderColor = "#666";

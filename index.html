@@ -1,226 +1,242 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Arabic Alphabet Flashcard Game</title>
-<style>
-  body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: #fbf8e6;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 30px;
-  }
-  #letters {
-    display: flex;
-    flex-wrap: nowrap;
-    max-width: 300px;
-    border: 3px solid #2962ff;
-    background: #fdfffc;
-    border-radius: 12px;
-    padding: 10px 4px;
-    gap: 0;
-    user-select: none;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #2962ff transparent;
-  }
-  #letters::-webkit-scrollbar {
-    height: 6px;
-  }
-  #letters::-webkit-scrollbar-thumb {
-    background-color: #2962ff;
-    border-radius: 3px;
-  }
-  #letters span {
-    font-size: 3rem;
-    cursor: pointer;
-    padding: 4px 7px;
-    margin: 0;
-    border-radius: 6px;
-    transition: background 0.3s;
-    width: 30px;
-    text-align: center;
-    color: #0047b3;
-    font-weight: 700;
-    user-select: none;
-    /* no spaces inside */
-  }
-  #letters span.selected {
-    background-color: #2962ff;
-    color: #fff;
-  }
-  #cards {
-    display: grid;
-    grid-template-columns: repeat(4, 140px);
-    gap: 18px;
-    max-width: 600px;
-  }
-  .card {
-    perspective: 1000px;
-    cursor: pointer;
-  }
-  .card-inner {
-    position: relative;
-    width: 140px;
-    height: 180px;
-    text-align: center;
-    transition: transform 0.7s;
-    transform-style: preserve-3d;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgb(41 98 255 / 0.3);
-    background: white;
-  }
-  .card.flipped .card-inner {
-    transform: rotateY(180deg);
-    cursor: default;
-  }
-  .card-front, .card-back {
-    position: absolute;
-    width: 140px;
-    height: 180px;
-    backface-visibility: hidden;
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .card-front {
-    background: #d1d9ff;
-    border: 3px solid #2962ff;
-  }
-  .card-front img {
-    max-width: 110px;
-    max-height: 110px;
-    object-fit: contain;
-    border-radius: 12px;
-  }
-  .card-back {
-    background: #2962ff;
-    color: white;
-    font-size: 2rem;
-    font-weight: 700;
-    transform: rotateY(180deg);
-    padding: 10px;
-    line-height: 1.3;
-    user-select: none;
-  }
-  #message {
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #4caf50;
-    color: white;
-    font-weight: 700;
-    padding: 12px 25px;
-    border-radius: 10px;
-    display: none;
-    font-size: 1.3rem;
-    box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
-    user-select: none;
-    z-index: 1000;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arabic Alphabet Flashcard Game</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f0f0;
+      color: #222222;
+      margin: 20px;
+      user-select: none;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    #letters, #cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    #letters > div, #cards > div {
+      cursor: pointer;
+      border: 2px solid #4978b2;
+      border-radius: 10px;
+      margin: 5px;
+      text-align: center;
+      font-size: 2.5rem;
+      color: #4978b2;
+      background: white;
+      box-shadow: 0 2px 5px rgb(73 120 178 / 0.3);
+      user-select: none;
+      transition: transform 0.3s;
+      flex: 1 1 calc(20% - 12px); /* 5 per row, minus margin */
+      max-width: calc(20% - 12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 70px;
+      font-weight: 700;
+    }
+    #letters > div:hover, #cards > div:hover {
+      background-color: #c4d8f2;
+      border-color: #2f5ea7;
+      transform: scale(1.1);
+    }
+    #cards > div {
+      position: relative;
+      height: 140px;
+      font-size: 1rem;
+      flex-direction: column;
+      padding: 8px;
+    }
+    #cards > div img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 8px;
+      pointer-events: none;
+      user-select: none;
+    }
+    /* Flip animation */
+    .flipped {
+      background-color: #4978b2;
+      color: white;
+      cursor: default;
+      transform: scale(1.05);
+    }
+    #message {
+      text-align: center;
+      font-weight: 600;
+      margin-top: 10px;
+      color: #4978b2;
+      min-height: 1.2em;
+    }
+    #resetBtn {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4978b2;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgb(73 120 178 / 0.5);
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+    #resetBtn:hover {
+      background-color: #2f5ea7;
+    }
+  </style>
 </head>
 <body>
+  <h1>Arabic Alphabet Flashcard Game</h1>
+  <button id="resetBtn">Restart Game</button>
+  <div id="letters"></div>
+  <div id="cards"></div>
+  <div id="message">Select a letter to start matching.</div>
 
-<div id="letters"></div>
-<div id="cards"></div>
-<div id="message"></div>
+  <script>
+    // Data for Arabic letters, words, and images
+    const data = [
+      { letter: "أ", word: "أسد", image: "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg" },
+      { letter: "ب", word: "بطة", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Male_Mallard_Duck_2.jpg/320px-Male_Mallard_Duck_2.jpg" },
+      { letter: "ت", word: "تفاح", image: "https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg" },
+      { letter: "ث", word: "ثعلب", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Vulpes_vulpes_ssp_Red_Fox_Sitting_3.jpg/320px-Vulpes_vulpes_ssp_Red_Fox_Sitting_3.jpg" },
+      { letter: "ج", word: "جمل", image: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Camel_portrait.jpg" },
+      { letter: "ح", word: "حصان", image: "https://upload.wikimedia.org/wikipedia/commons/7/70/Black_Horse_01.jpg" },
+      { letter: "خ", word: "خروف", image: "https://upload.wikimedia.org/wikipedia/commons/4/45/Sheep_Rosslyn_2.jpg" },
+      { letter: "د", word: "ديك", image: "https://upload.wikimedia.org/wikipedia/commons/4/42/Gallus_gallus_domesticus.jpg" },
+      { letter: "ذ", word: "ذئب", image: "https://upload.wikimedia.org/wikipedia/commons/3/31/Canis_lupus_laying_in_grass_2.jpg" },
+      { letter: "ر", word: "رسم", image: "https://upload.wikimedia.org/wikipedia/commons/2/29/Colorful_pencils.jpg" },
+      { letter: "ز", word: "زهرة", image: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Red_rose_flower_in_morning_sunshine.jpg" },
+      { letter: "س", word: "سمكة", image: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Clown_fish_in_its_anemone.jpg" },
+      { letter: "ش", word: "شجرة", image: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Tree_in_Snow.jpg" },
+      { letter: "ص", word: "صقر", image: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Falcon_in_flight_2.jpg" },
+      { letter: "ض", word: "ضفدع", image: "https://upload.wikimedia.org/wikipedia/commons/7/77/European_tree_frog_2004-08-08.jpg" },
+      { letter: "ط", word: "طائر", image: "https://upload.wikimedia.org/wikipedia/commons/0/02/Colorful_bird_%28PSF%29.png" },
+      { letter: "ظ", word: "ظرف", image: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Postal_envelope_icon.png" },
+      { letter: "ع", word: "عصفور", image: "https://upload.wikimedia.org/wikipedia/commons/5/53/European_Robin_-_England.jpg" },
+      { letter: "غ", word: "غزال", image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Gazelle-portrait.jpg" },
+      { letter: "ف", word: "فيل", image: "https://upload.wikimedia.org/wikipedia/commons/3/37/African_Bush_Elephant.jpg" },
+      { letter: "ق", word: "قرد", image: "https://upload.wikimedia.org/wikipedia/commons/6/62/Macaca_fuscata_Yoshika_01.jpg" },
+      { letter: "ك", word: "كتاب", image: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Old_book_bindings.jpg" },
+      { letter: "ل", word: "ليمون", image: "https://upload.wikimedia.org/wikipedia/commons/9/9e/Lemon-edit1.jpg" },
+      { letter: "م", word: "موز", image: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Banana-Single.jpg" },
+      { letter: "ن", word: "نمر", image: "https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg" },
+      { letter: "ه", word: "هدهد", image: "https://upload.wikimedia.org/wikipedia/commons/5/5a/Upupa_epops_-_India_01.jpg" },
+      { letter: "و", word: "وردة", image: "https://upload.wikimedia.org/wikipedia/commons/f/fd/Rose_flower_in_the_sunlight.jpg" },
+      { letter: "ي", word: "يقطين", image: "https://upload.wikimedia.org/wikipedia/commons/2/29/Pumpkin_and_gourds_at_Farmers_Market.jpg" }
+    ];
 
-<script>
-  // Keep original bright images (or replace with similar if broken)
-  const data = [
-    { letter: 'أ', word: 'أسد', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Lion_waiting_in_Namibia.jpg/320px-Lion_waiting_in_Namibia.jpg' },
-    { letter: 'ب', word: 'باب', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Old_door_in_Athens_-_2014-03-18.jpg/320px-Old_door_in_Athens_-_2014-03-18.jpg' },
-    { letter: 'ت', word: 'تفاح', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/320px-Red_Apple.jpg' },
-    { letter: 'ث', word: 'ثعلب', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Red_Fox_-_British_Wildlife_Centre.jpg/320px-Red_Fox_-_British_Wildlife_Centre.jpg' },
-    { letter: 'ج', word: 'جمل', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Camel_Giza.JPG/320px-Camel_Giza.JPG' },
-    { letter: 'ح', word: 'حصان', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Horse_2.jpg/320px-Horse_2.jpg' },
-    { letter: 'خ', word: 'خروف', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Sheep_2017.jpg/320px-Sheep_2017.jpg' },
-    { letter: 'د', word: 'دولفين', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Common_dolphin.jpg/320px-Common_dolphin.jpg' },
-    { letter: 'ذ', word: 'ذهب', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Gold_Bars_%2826822231064%29.jpg/320px-Gold_Bars_%2826822231064%29.jpg' },
-    { letter: 'ر', word: 'رز', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Rice_Mercosur.jpg/320px-Rice_Mercosur.jpg' },
-    { letter: 'ز', word: 'زرافة', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Giraffe_standing.jpg/320px-Giraffe_standing.jpg' },
-    { letter: 'س', word: 'سمكة', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Goldfish3.jpg/320px-Goldfish3.jpg' },
-    { letter: 'ش', word: 'شمعة', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Candle_Lit.jpg/320px-Candle_Lit.jpg' },
-    { letter: 'ص', word: 'صقر', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Falcon_from_above.jpg/320px-Falcon_from_above.jpg' },
-    { letter: 'ض', word: 'ضفدع', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Green_Frog.jpg/320px-Green_Frog.jpg' },
-    { letter: 'ط', word: 'طائر', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Bird_07-09-10_7916.jpg/320px-Bird_07-09-10_7916.jpg' },
-    { letter: 'ظ', word: 'ظرف', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Envelope-icon.png/320px-Envelope-icon.png' },
-    { letter: 'ع', word: 'عنب', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Red_grapes_on_white_background.jpg/320px-Red_grapes_on_white_background.jpg' },
-    { letter: 'غ', word: 'غزال', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Thomsons_Gazelle.jpg/320px-Thomsons_Gazelle.jpg' },
-    { letter: 'ف', word: 'فيل', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/African_Bush_Elephant.jpg/320px-African_Bush_Elephant.jpg' },
-    { letter: 'ق', word: 'قلم', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Ballpoint_pen_1.jpg/320px-Ballpoint_pen_1.jpg' },
-    { letter: 'ك', word: 'كتاب', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Open_book_nae_02.jpg/320px-Open_book_nae_02.jpg' },
-    { letter: 'ل', word: 'لبن', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Milk_glass_and_cookies.jpg/320px-Milk_glass_and_cookies.jpg' },
-    { letter: 'م', word: 'موز', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Banana_and_cross_section.jpg/320px-Banana_and_cross_section.jpg' },
-    { letter: 'ن', word: 'نار', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Fire_icon.png/320px-Fire_icon.png' },
-    { letter: 'هـ', word: 'هلال', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Crescent_moon_icon.png/320px-Crescent_moon_icon.png' },
-    { letter: 'و', word: 'وردة', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Rose_flower_in_the_garden.jpg/320px-Rose_flower_in_the_garden.jpg' },
-    { letter: 'ي', word: 'يد', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Open_hand_icon.png/320px-Open_hand_icon.png' }
-  ];
+    let selectedLetter = null;
 
-  const lettersContainer = document.getElementById('letters');
-  const cardsContainer = document.getElementById('cards');
-  const message = document.getElementById('message');
+    const lettersDiv = document.getElementById("letters");
+    const cardsDiv = document.getElementById("cards");
+    const messageDiv = document.getElementById("message");
+    const resetBtn = document.getElementById("resetBtn");
 
-  // Render letters without spaces inside (tightly joined)
-  data.forEach(item => {
-    const span = document.createElement('span');
-    span.textContent = item.letter;
-    lettersContainer.appendChild(span);
-  });
+    // Shuffle array helper
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
 
-  // Show cards of currently selected letter, or all if none selected
-  function renderCards(filterLetter = null) {
-    cardsContainer.innerHTML = '';
-    const filtered = filterLetter ? data.filter(d => d.letter === filterLetter) : data;
-    filtered.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-inner">
-          <div class="card-front"><img src="${item.img}" alt="${item.word}" loading="lazy" /></div>
-          <div class="card-back">${item.word}</div>
-        </div>
-      `;
-      card.addEventListener('click', () => {
-        if (card.classList.contains('flipped')) return;
-        card.classList.add('flipped');
-        showMessage(`كلمة: ${item.word}`, 1800);
+    function renderLetters() {
+      lettersDiv.innerHTML = "";
+      data.forEach(({ letter }) => {
+        const div = document.createElement("div");
+        div.textContent = letter;
+        div.addEventListener("click", () => {
+          if (selectedLetter === letter) {
+            // Deselect
+            selectedLetter = null;
+            div.style.backgroundColor = "";
+            messageDiv.textContent = "Select a letter to start matching.";
+          } else {
+            selectedLetter = letter;
+            // Clear all highlights
+            Array.from(lettersDiv.children).forEach(child => {
+              child.style.backgroundColor = "";
+            });
+            div.style.backgroundColor = "#c4d8f2"; // highlight selected letter
+            messageDiv.textContent = `You selected letter "${letter}". Now click the matching picture.`;
+          }
+        });
+        lettersDiv.appendChild(div);
       });
-      cardsContainer.appendChild(card);
-    });
-  }
+    }
 
-  // Message popup
-  function showMessage(text, duration = 1500) {
-    message.textContent = text;
-    message.style.display = 'block';
-    setTimeout(() => {
-      message.style.display = 'none';
-    }, duration);
-  }
+    function renderCards() {
+      cardsDiv.innerHTML = "";
+      const shuffledData = shuffle([...data]);
 
-  // Letter click handling
-  lettersContainer.addEventListener('click', e => {
-    if (e.target.tagName !== 'SPAN') return;
-    const selected = lettersContainer.querySelector('.selected');
-    if (selected) selected.classList.remove('selected');
-    e.target.classList.add('selected');
-    renderCards(e.target.textContent);
-  });
+      shuffledData.forEach(({ letter, word, image }) => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.letter = letter;
 
-  // Initial show all cards
-  renderCards();
-</script>
+        const img = document.createElement("img");
+        img.src = image;
+        img.alt = word;
 
+        const wordDiv = document.createElement("div");
+        wordDiv.textContent = word;
+        wordDiv.style.display = "none";
+        wordDiv.style.fontSize = "1.5rem";
+        wordDiv.style.marginTop = "5px";
+        wordDiv.style.fontWeight = "700";
+
+        card.appendChild(img);
+        card.appendChild(wordDiv);
+
+        card.addEventListener("click", () => {
+          if (!selectedLetter) {
+            messageDiv.textContent = "Please select a letter first.";
+            return;
+          }
+          if (card.classList.contains("flipped")) return; // already flipped
+
+          if (selectedLetter === card.dataset.letter) {
+            card.classList.add("flipped");
+            img.style.display = "none";
+            wordDiv.style.display = "block";
+            messageDiv.textContent = `Great! "${selectedLetter}" matches "${word}". Select another letter.`;
+            selectedLetter = null;
+            // Remove highlight from letters
+            Array.from(lettersDiv.children).forEach(child => {
+              child.style.backgroundColor = "";
+            });
+          } else {
+            messageDiv.textContent = "Oops! That's not the right match. Try again.";
+          }
+        });
+
+        cardsDiv.appendChild(card);
+      });
+    }
+
+    function initGame() {
+      selectedLetter = null;
+      messageDiv.textContent = "Select a letter to start matching.";
+      renderLetters();
+      renderCards();
+    }
+
+    resetBtn.addEventListener("click", initGame);
+
+    // Initialize on page load
+    initGame();
+  </script>
 </body>
 </html>

@@ -29,22 +29,22 @@
   .game-grid {
     display: flex;
     justify-content: space-between;
-    gap: 30px;
+    gap: 20px;
     flex-wrap: wrap;
   }
   .letters, .cards {
     flex: 1;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 6px 6px;
     justify-content: center;
     min-width: 280px;
   }
   .letter {
     background: #f0c04a;
     border-radius: 8px;
-    font-size: 2rem;
-    width: 60px; height: 60px;
+    font-size: 2.2rem;
+    width: 50px; height: 50px;
     display:flex;
     align-items:center; justify-content:center;
     cursor: pointer;
@@ -60,8 +60,8 @@
     cursor: default;
   }
   .card {
-    width: 120px;
-    height: 150px;
+    width: 110px;
+    height: 140px;
     perspective: 600px;
   }
   .card-inner {
@@ -86,14 +86,14 @@
     padding: 5px;
   }
   .card-front img {
-    max-width: 90%; height: auto;
+    max-width: 85%; height: auto;
     border-radius: 8px;
   }
   .card-back {
     background: #f0c04a;
     color: white;
     transform: rotateY(180deg);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
     text-align: center;
   }
